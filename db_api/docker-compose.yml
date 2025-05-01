@@ -1,0 +1,25 @@
+services:
+  mongodb:
+    build:
+      context: ./mongo_database
+      dockerfile: Dockerfile
+    container_name: statsdb_no_persistence
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./dataAPI
+      dockerfile: Dockerfile
+    container_name: data_api
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - "3018:3018"
