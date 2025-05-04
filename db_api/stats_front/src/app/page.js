@@ -1,9 +1,9 @@
 'use client';
 
-import Menu from "@/app/components/Menu/page";
-import Events from "@/app/components/Events/page";
-import Filters from "@/app/components/Filters/page";
-import ChartComponent from "@/app/components/ChartComponent/page";
+import Menu from "./components/Menu/page";
+import Events from "./components/Events/page";
+import Filters from "./components/Filters/page";
+import ChartComponent from "./components/ChartComponent/page";
 
 import { useState } from 'react';
 
