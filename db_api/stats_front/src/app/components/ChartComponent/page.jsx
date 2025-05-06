@@ -116,13 +116,6 @@ const ChartComponent = ({ filters }) => {
           let chartType, backgroundColor, borderColor, borderWidth, label;
 
           switch (dataItem.stat) {
-            case 'pkb':
-              chartType = 'bar';
-              backgroundColor = 'rgba(54, 162, 235, 0.5)';
-              borderColor = 'rgba(54, 162, 235, 1)';
-              borderWidth = 1;
-              label = 'PKB (w mld zł)';
-              break;
             case 'inflation':
               chartType = 'line';
               backgroundColor = 'rgba(255, 99, 132, 0.5)';
@@ -149,7 +142,14 @@ const ChartComponent = ({ filters }) => {
               backgroundColor = 'rgba(255, 159, 64, 0.5)';
               borderColor = 'rgba(255, 159, 64, 1)';
               borderWidth = 2;
-              label = retirementTypeNames[dataItem.retirementTypeId] || 'Emerytura';
+              label = `${retirementTypeNames[dataItem.retirementTypeId] || 'Emerytura'} (zł)`;
+              break;
+            case 'pkb':
+              chartType = 'bar';
+              backgroundColor = 'rgba(54, 162, 235, 0.5)';
+              borderColor = 'rgba(54, 162, 235, 1)';
+              borderWidth = 1;
+              label = 'PKB (zł na os.)';
               break;
           }
 
@@ -170,10 +170,16 @@ const ChartComponent = ({ filters }) => {
         // Sort years in ascending order
         const sortedYears = Array.from(years).sort((a, b) => a - b);
 
+        const sortedDatasets = [
+          ...datasets.filter(ds => ds.type === 'line'),
+          ...datasets.filter(ds => ds.type === 'bar'),
+        ];
+        
         setChartData({
           labels: sortedYears,
-          datasets: datasets,
+          datasets: sortedDatasets,
         });
+        
 
       } catch (err) {
         console.error('Error fetching chart data:', err);
@@ -199,7 +205,8 @@ const ChartComponent = ({ filters }) => {
         text: 'Dane statystyczne',
         font: {
           size: 18
-        }
+        },
+        align:'left'
       },
       tooltip: {
         callbacks: {
@@ -211,17 +218,17 @@ const ChartComponent = ({ filters }) => {
             if (context.parsed.y !== null) {
               // Format numbers differently based on the dataset
               if (context.dataset.label.includes('PKB')) {
-                label += new Intl.NumberFormat('pl-PL', { 
+                label += new Intl.NumberFormat('pl-PL', {
                   style: 'decimal',
                   maximumFractionDigits: 2
                 }).format(context.parsed.y);
               } else if (context.dataset.label.includes('zł')) {
-                label += new Intl.NumberFormat('pl-PL', { 
+                label += new Intl.NumberFormat('pl-PL', {
                   style: 'decimal',
                   maximumFractionDigits: 2
                 }).format(context.parsed.y) + ' zł';
               } else if (context.dataset.label.includes('%')) {
-                label += new Intl.NumberFormat('pl-PL', { 
+                label += new Intl.NumberFormat('pl-PL', {
                   style: 'decimal',
                   maximumFractionDigits: 2
                 }).format(context.parsed.y) + '%';
@@ -244,7 +251,7 @@ const ChartComponent = ({ filters }) => {
           text: 'Wartość'
         },
         ticks: {
-          callback: function(value) {
+          callback: function (value) {
             return new Intl.NumberFormat('pl-PL').format(value);
           }
         }
@@ -261,7 +268,7 @@ const ChartComponent = ({ filters }) => {
           text: 'Inflacja (%)'
         },
         ticks: {
-          callback: function(value) {
+          callback: function (value) {
             return value + '%';
           }
         }

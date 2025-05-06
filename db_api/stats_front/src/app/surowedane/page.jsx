@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 
 const DataRangeDropdown = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -19,20 +21,20 @@ const DataRangeDropdown = () => {
   const fetchData = async (option) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       let response;
       if (option === 'retirement') {
         // First get retirement types
         const typesResponse = await fetch('http://localhost:3018/api/gus/retirement/types');
         const typesData = await typesResponse.json();
-        
+
         // Then fetch data for each type
         const retirementPromises = Object.keys(typesData).map(async (id) => {
           const res = await fetch(`http://localhost:3018/api/gus/retirement/${id}/range/2000/2024`);
           return res.json();
         });
-        
+
         const retirementData = await Promise.all(retirementPromises);
         response = {
           stat: 'retirement',
@@ -43,7 +45,7 @@ const DataRangeDropdown = () => {
         const res = await fetch(`http://localhost:3018/api/stats/${option}/range/2000/2024`);
         response = await res.json();
       }
-      
+
       setJsonData(response);
     } catch (err) {
       setError('Wystąpił błąd podczas pobierania danych');
@@ -61,11 +63,21 @@ const DataRangeDropdown = () => {
     }
   };
 
+  const { data: session, status } = useSession()
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (!session) {
+    redirect('/login?error=SessionRequired');
+  }
+
   return (
     <div className="w-full mx-auto p-4">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <h1 className="text-xl font-bold mb-4 text-gray-700">Pobierz pełne zakresy danych</h1>
-        
+
         <select
           value={selectedOption}
           onChange={handleOptionChange}

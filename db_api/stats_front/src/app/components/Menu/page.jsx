@@ -4,19 +4,16 @@ import { MdDisplaySettings } from "react-icons/md"; //Wizualizacja
 import { MdBarChart } from "react-icons/md"; //Analiza
 import { MdFolder } from "react-icons/md"; //Surowe dane 
 import { MdCode } from "react-icons/md"; //API 
-import { IoMdPerson } from "react-icons/io"; //User icon
+import { IoMdPerson, IoMdLogOut } from "react-icons/io"; //User icon
 import Image from 'next/image';
-import { logout } from "@/app/utils/logout";
+import { signOut } from "next-auth/react";
 
-import React from 'react';
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 const Menu = () => {
-
-    const handleSignOut = async () => {
-        await logout(); // Calls the Server Action
-    };
+    const [showLogout, setShowLogout] = useState(false);
 
     const pathname = usePathname();
 
@@ -55,8 +52,24 @@ const Menu = () => {
             </nav>
 
             {/* Profil użytkownika */}
+            {/* Profil użytkownika */}
             <div className="mt-auto">
-                <div className="flex items-center p-2 rounded-lg hover:bg-blue-700 hover:text-white transition cursor-pointer" onClick={handleSignOut}>
+                {/* Opcja wylogowania - pojawia się po kliknięciu */}
+                {showLogout && (
+                    <div
+                        className="flex items-center p-2 rounded-lg hover:bg-red-600 hover:text-white transition cursor-pointer mb-2"
+                        onClick={() => signOut({ callbackUrl: "/" })}
+                    >
+                        <IoMdLogOut className="mr-2" size={18} />
+                        <span>Wyloguj się</span>
+                    </div>
+                )}
+
+                {/* Profil użytkownika */}
+                <div
+                    className="flex items-center p-2 rounded-lg hover:bg-blue-700 hover:text-white transition cursor-pointer"
+                    onClick={() => setShowLogout(!showLogout)}
+                >
                     {user.avatar ? (
                         <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
                             <Image
