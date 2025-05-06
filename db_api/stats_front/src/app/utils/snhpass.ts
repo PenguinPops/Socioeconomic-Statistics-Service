@@ -1,10 +1,14 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 // Function to salt and hash a password
 export const saltAndHashPassword = async (password) => {
+  if (!password) {
+    throw new Error("Password is required");
+  }
   // Generate a salt
   const saltRounds = 10; // You can adjust the number of salt rounds for security
   const salt = await bcrypt.genSalt(saltRounds);
+  
   
   // Hash the password with the salt
   const hashedPassword = await bcrypt.hash(password, salt);

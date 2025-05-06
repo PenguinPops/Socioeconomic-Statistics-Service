@@ -288,14 +288,14 @@ const ChartComponent = ({ filters }) => {
 
   if (!chartData) {
     return (
-      <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
+      <div className="flex items-center justify-center h-[460px] bg-gray-50 rounded-lg">
         <p className="text-gray-500">Wybierz filtry aby wyświetlić dane</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-[480px] p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="w-full h-[460px] p-4 bg-white rounded-lg shadow-sm border border-gray-200">
       <Chart
         ref={chartRef}
         type='bar'

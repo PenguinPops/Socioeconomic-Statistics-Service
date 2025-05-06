@@ -29,13 +29,13 @@ services:
       timeout: 10s   # Timeout after 10 seconds
       retries: 3     # Retry 3 times before marking as unhealthy
 
-  frontend:
-    build:
-      context: ./stats_front
-      dockerfile: Dockerfile
-    container_name: stats_frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      api:
-        condition: service_healthy
+  # frontend:
+  #   build:
+  #     context: ./stats_front
+  #     dockerfile: Dockerfile
+  #   container_name: stats_frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     api:
+  #       condition: service_healthy

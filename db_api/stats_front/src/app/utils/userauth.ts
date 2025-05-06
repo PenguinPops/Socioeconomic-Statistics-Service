@@ -1,30 +1,33 @@
 import { saltAndHashPassword } from "@/app/utils/snhpass";
+import { comparePassword } from "@/app/utils/snhpass";
+import users from "@/app/mock/users.json";
 
-// Mock user data for testing
-const mockUser = {
-    email: "test@test.test",
-    password: "testtest", // This is the plaintext password for testing
-    name: "Test User", // You can add more user properties as needed
-  };
+// Function to simulate database user retrieval
+const getUserFromDb = async (email: string, passwordHash: string) => {
+  if (!email || !passwordHash) {
+    throw new Error("Email and password hash are required");
+  }
+
+  // Find user by email
+  const user = users.find(u => u.email === email);
   
-  // Function to simulate database user retrieval
-  const getUserFromDb = async (email, passwordHash) => {
-    // Check if the provided email matches the hardcoded email
-    if (email === mockUser.email) {
-      // Here we compare the hashed password with the plaintext password
-      // In a real application, you would hash the input password and compare it with the stored hash
-      if (passwordHash === saltAndHashPassword(mockUser.password)) {
-        return {
-          email: mockUser.email,
-          name: mockUser.name,
-          // Add any other user properties you want to return
-        };
-      }
+  if (user) {
+    // Compare the provided password hash with the stored password
+    // Note: In a real application, you would compare hashes, not plaintext
+    const isMatch = await comparePassword(user.password, passwordHash);
+    
+    if (isMatch) {
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.username, // Using username as name
+        role: user.role
+      };
     }
-    // Return null if no user is found or credentials do not match
-    return null;
-  };
+  }
   
-  // Export the function for use in your NextAuth configuration
-  export { getUserFromDb };
-  
+  return null;
+};
+
+// Export the function for use in your NextAuth configuration
+export { getUserFromDb };

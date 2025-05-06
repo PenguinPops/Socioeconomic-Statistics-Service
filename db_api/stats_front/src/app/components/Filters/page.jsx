@@ -74,8 +74,8 @@ const Filters = ({ onApplyFilters, onResetFilters }) => {
     };
 
     return (
-        <div className="max-w-2xl h-[550px] text-gray-700">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-black h-[550px] overflow-y-auto">
+        <div className="max-w-2xl h-[450px] text-gray-700">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-black h-[450px] overflow-y-auto">
                 <h1 className="text-xl font-bold mb-4 text-gray-500">Filtry</h1>
                 <div className="grid grid-cols-2 gap-2 mb-4">
                     <FilterButton

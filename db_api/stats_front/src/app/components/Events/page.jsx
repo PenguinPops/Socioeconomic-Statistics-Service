@@ -9,14 +9,14 @@ const Events = ({ filters }) => {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setIsLoading(true);
         // Use the year range from filters if available, otherwise use default
-        const yearRange = filters?.yearRange || [2005, 2010];
+        const yearRange = filters?.yearRange || [2010, 2018];
         const response = await fetch(
           `http://localhost:3018/api/events/range/${yearRange[0]}/${yearRange[1]}`
         );
@@ -61,44 +61,48 @@ const Events = ({ filters }) => {
   const endItem = Math.min(currentPage * itemsPerPage, totalEvents);
 
   return (
-    <div className="w-full h-[550px] text-gray-700">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-black h-[550px] overflow-y-auto">
+    <div className="w-full h-[450px] text-gray-700 relative">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 text-black h-full flex flex-col">
         <h1 className="text-xl font-bold mb-4 text-gray-500">Wydarzenia prasowe</h1>
-        {currentEvents.map((event, index) => (
-          <Event
-            key={event.date + index}
-            title={event.description}
-            date={event.date}
-            link={event.link}
-          />
-        ))}
-        <div className="flex justify-between items-center mt-4 text-sm">
-          <div>
-            {startItem} - {endItem} z {totalEvents}
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`px-3 py-1 rounded ${
-                currentPage === 1
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              <MdKeyboardArrowLeft size={20} />
-            </button>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded ${
-                currentPage === totalPages
-                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200"
-              }`}
-            >
-              <MdKeyboardArrowRight size={20} />
-            </button>
+        <div className="flex-grow overflow-y-auto">
+          {currentEvents.map((event, index) => (
+            <Event
+              key={event.date + index}
+              title={event.description}
+              date={event.date}
+              link={event.source}
+            />
+          ))}
+        </div>
+        <div className="sticky bottom-0 bg-white pt-4 border-t border-gray-200">
+          <div className="flex justify-between items-center text-sm">
+            <div>
+              {startItem} - {endItem} z {totalEvents}
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                <MdKeyboardArrowLeft size={20} />
+              </button>
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded ${
+                  currentPage === totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 hover:bg-gray-200"
+                }`}
+              >
+                <MdKeyboardArrowRight size={20} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
+    "@heroicons/react": "^2.2.0",
+    "bcryptjs": "^3.0.2",
     "canvas": "^3.1.0",
     "chart.js": "^4.4.9",
     "chartjs-plugin-annotation": "^3.1.0",

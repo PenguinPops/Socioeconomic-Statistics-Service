@@ -1,5 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { Menu } from "@/app/components/Menu/page"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,12 +19,23 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <SessionProvider>
+          <div className="flex h-screen">
+            {/* Fixed Left-side Menu */}
+            <div className="fixed left-0 top-0 bottom-0 w-64 border-r border-gray-200">
+              <Menu/>
+            </div>
+            
+            {/* Content area with padding to account for fixed menu */}
+            <div className="flex-1 pl-64 overflow-y-auto">
+              {children}
+            </div>
+          </div>
+        </SessionProvider>
       </body>
     </html>
   );
