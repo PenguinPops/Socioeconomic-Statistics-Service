@@ -1,41 +1,42 @@
-services:
-  mongodb:
-    build:
-      context: ./mongo_database
-      dockerfile: Dockerfile
-    container_name: statsdb_no_persistence
-    ports:
-      - "27017:27017"
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+  services:
+    mongodb:
+      build:
+        context: ./mongo_database
+        dockerfile: Dockerfile
+      container_name: statsdb_no_persistence
+      ports:
+        - "27017:27017"
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
 
-  api:
-    build:
-      context: ./dataAPI
-      dockerfile: Dockerfile
-    container_name: data_api
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    ports:
-      - "3018:3018"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3018/"]  # Check if the API is reachable
-      interval: 30s  # Check every 30 seconds
-      timeout: 10s   # Timeout after 10 seconds
-      retries: 3     # Retry 3 times before marking as unhealthy
+    api:
+      build:
+        context: ./dataAPI
+        dockerfile: Dockerfile
+      container_name: data_api
+      depends_on:
+        mongodb:
+          condition: service_healthy
+      ports:
+        - "3018:3018"
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:3018/"]
+        interval: 10s
+        timeout: 10s
+        retries: 5
 
-  # frontend:
-  #   build:
-  #     context: ./stats_front
-  #     dockerfile: Dockerfile
-  #   container_name: stats_frontend
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     api:
-  #       condition: service_healthy
+    frontend:
+      build:
+        context: ./stats_front
+        dockerfile: Dockerfile
+      
+      container_name: stats_frontend
+      ports:
+        - "3000:3000"
+      depends_on:
+        api:
+          condition: service_healthy

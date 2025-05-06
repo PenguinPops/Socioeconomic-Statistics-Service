@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import { LoadingSpinner } from '@/app/components/LoadingSpinner/page';
 
 const DataRangeDropdown = () => {
   const [selectedOption, setSelectedOption] = useState('');
@@ -66,7 +67,7 @@ const DataRangeDropdown = () => {
   const { data: session, status } = useSession()
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!session) {

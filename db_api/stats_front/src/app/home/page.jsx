@@ -4,6 +4,7 @@ import Menu from "@/app/components/Menu/page";
 import Events from "@/app/components/Events/page";
 import Filters from "@/app/components/Filters/page";
 import ChartComponent from "@/app/components/ChartComponent/page";
+import { LoadingSpinner } from "../components/LoadingSpinner/page";
 
 import { useState } from 'react';
 import { redirect } from "next/navigation";
@@ -14,7 +15,7 @@ export default function Home() {
   const { data: session, status } = useSession()
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (!session) {

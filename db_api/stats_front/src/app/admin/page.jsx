@@ -4,6 +4,7 @@ import { useState } from 'react';
 import usersData from '@/app/mock/users.json';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import { LoadingSpinner } from '@/app/components/LoadingSpinner/page';
 
 const AdminPage = () => {
     const [users, setUsers] = useState(usersData);
@@ -44,20 +45,21 @@ const AdminPage = () => {
     const { data: session, status } = useSession()
 
     if (status === 'loading') {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />;
     }
+
 
     if (!session) {
         redirect('/login?error=SessionRequired');
     }
 
-    if(session.user.role != "admin") {
+    if (session.user.role != "admin") {
         return (
             <div className="flex items-center justify-center h-screen bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md text-center">
-                <h1 className="text-2xl font-bold text-red-600 mb-4">Brak dostępu</h1>
-                <p className="text-gray-700">Nie masz dostępu do tych treści - dostęp wyłącznie dla administratora.</p>
-            </div>
+                <div className="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h1 className="text-2xl font-bold text-red-600 mb-4">Brak dostępu</h1>
+                    <p className="text-gray-700">Nie masz dostępu do tych treści - dostęp wyłącznie dla administratora.</p>
+                </div>
             </div>
         );
     }
@@ -120,7 +122,7 @@ const AdminPage = () => {
                                             </select>
                                         ) : (
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' :
-                                                    'bg-green-100 text-green-800'
+                                                'bg-green-100 text-green-800'
                                                 }`}>
                                                 {user.role}
                                             </span>

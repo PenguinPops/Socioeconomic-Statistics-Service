@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { RangeSlider } from "react-double-range-slider";
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import { LoadingSpinner } from '@/app/components/LoadingSpinner/page';
 
 
 const ApiBuilder = () => {
@@ -113,8 +114,9 @@ const ApiBuilder = () => {
     const { data: session, status } = useSession()
 
     if (status === 'loading') {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />;
     }
+
 
     if (!session) {
         redirect('/login?error=SessionRequired');
@@ -132,8 +134,8 @@ const ApiBuilder = () => {
                             key={option.value}
                             onClick={() => handleOptionSelect(option.value)}
                             className={`px-4 py-2 rounded-lg border transition-colors ${selectedOption === option.value
-                                    ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
-                                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                                ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-600'
+                                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                                 }`}
                         >
                             {option.label}
