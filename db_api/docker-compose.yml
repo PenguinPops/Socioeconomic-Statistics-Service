@@ -29,6 +29,38 @@
         timeout: 10s
         retries: 5
 
+    userdb:
+      build:
+        context: ./user_db
+        dockerfile: Dockerfile
+      container_name: userdb_persistence
+      ports:
+        - "5432:5432"
+      volumes:
+        - userdb_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD", "pg_isready", "-U", "postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    user_db_gui:
+      build:
+        context: ./user_db_gui
+        dockerfile: Dockerfile
+      container_name: userdb_gui
+      depends_on:
+        userdb:
+          condition: service_healthy
+      ports:
+        - "15432:80"
+      restart: unless-stopped
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15432/"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
     frontend:
       build:
         context: ./stats_front
@@ -40,3 +72,8 @@
       depends_on:
         api:
           condition: service_healthy
+        userdb:
+          condition: service_healthy
+
+  volumes:
+    userdb_data:

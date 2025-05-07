@@ -1,0 +1,9 @@
+
+❯ docker build -t user_db .
+❯ docker run --name user_db_c -p 5432:5432 -d user_db
+
+❯ docker build -t user_db_gui .
+❯ docker run --name user_db_gui_c -p 15432:80 -d user_db_gui
+
+## IP POSTGRESDB
+docker inspect user_db_c -f "{{json .NetworkSettings.Networks}}"
