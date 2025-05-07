@@ -71,7 +71,11 @@ const ApiBuilder = () => {
         if (selectedOption === 'retirement' && selectedRetirementType) {
             url += `/api/gus/retirement/${selectedRetirementType}/range/${yearRange.min}/${yearRange.max}`;
         } else if (selectedOption !== 'retirement') {
-            url += `/api/stats/${selectedOption}/range/${yearRange.min}/${yearRange.max}`;
+            if(selectedOption === 'events') {
+                url += `/api/events/range/${yearRange.min}/${yearRange.max}`;
+            } else {
+                url += `/api/stats/${selectedOption}/range/${yearRange.min}/${yearRange.max}`;
+            }
         } else {
             url = '';
         }
@@ -108,7 +112,8 @@ const ApiBuilder = () => {
         { value: 'avg', label: 'Średnia krajowa' },
         { value: 'pkb', label: 'PKB' },
         { value: 'minimal', label: 'Minimalna krajowa' },
-        { value: 'retirement', label: 'Emerytura' }
+        { value: 'retirement', label: 'Emerytura' },
+        { value: 'events', label: 'Wydarzenia' }
     ];
 
     const { data: session, status } = useSession()
@@ -128,7 +133,7 @@ const ApiBuilder = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h1 className="text-2xl font-bold mb-6 text-gray-800">API URL Builder</h1>
 
-                <div className="grid grid-cols-5 gap-4 mb-6">
+                <div className="grid grid-cols-3 gap-4 mb-6">
                     {options.map(option => (
                         <button
                             key={option.value}
@@ -159,7 +164,7 @@ const ApiBuilder = () => {
                     </div>
                 )}
 
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mb-6 ml-19">
                     <div className="w-full max-w-lg">
                         <RangeSlider
                             from={yearRange.min}

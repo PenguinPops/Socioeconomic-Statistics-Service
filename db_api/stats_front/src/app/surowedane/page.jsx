@@ -16,7 +16,8 @@ const DataRangeDropdown = () => {
     { value: 'pkb', label: 'Wszystkie dane dot. PKB' },
     { value: 'minimal', label: 'Wszystkie dane dot. płacy minimalnej' },
     { value: 'avg', label: 'Wszystkie dane dot. płacy średniej' },
-    { value: 'retirement', label: 'Wszystkie dane dot. emerytur' }
+    { value: 'retirement', label: 'Wszystkie dane dot. emerytur' },
+    { value: 'events', label: 'Wszystkie dane dot. wydarzeń' }
   ];
 
   const fetchData = async (option) => {
@@ -42,6 +43,9 @@ const DataRangeDropdown = () => {
           range: '2000-2024',
           data: retirementData
         };
+      } else if (option === 'events') {
+        const res = await fetch('http://localhost:3018/api/events/range/2000/2024');
+        response = await res.json();
       } else {
         const res = await fetch(`http://localhost:3018/api/stats/${option}/range/2000/2024`);
         response = await res.json();
