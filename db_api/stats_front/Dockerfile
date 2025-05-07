@@ -3,7 +3,7 @@ FROM node:18
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json first to leverage Docker cache
-COPY package.json package-lock.json eslint.config.mjs jsconfig.json next.config.mjs postcss.config.mjs auth.ts next-env.d.ts tsconfig.json db.ts ./
+COPY package.json package-lock.json eslint.config.mjs jsconfig.json next.config.mjs postcss.config.mjs auth.ts tsconfig.json db.ts ./
 
 COPY src ./src
 
