@@ -3,9 +3,41 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
 const { MongoClient, ServerApiVersion, Int32 } = require("mongodb");
+const promClient = require('prom-client');
+
+const register = new promClient.Registry();
+
+register.setDefaultLabels({
+    app: 'data-api'
+});
+
+promClient.collectDefaultMetrics({ register });
+
+const httpRequestDurationMicroseconds = new promClient.Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'Duration of HTTP requests in seconds',
+    labelNames: ['method', 'route', 'code'],
+    buckets: [0.1, 0.3, 0.5, 0.7, 1, 3, 5, 7, 10]
+});
+
+register.registerMetric(httpRequestDurationMicroseconds);
 
 const app = express();
 const port = 3018;
+
+app.use((req, res, next) => {
+    const end = httpRequestDurationMicroseconds.startTimer();
+    res.on('finish', () => {
+        end({ method: req.method, route: req.route.path, code: res.statusCode });
+    });
+    next();
+});
+
+app.get('/metrics', async (req, res) => {
+    res.set('Content-Type', register.contentType);
+    res.end(await register.metrics());
+});
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -108,7 +140,7 @@ app.get('/api/events/year/:year', async (req, res) => {
         const collection = dbClient.db("Events").collection("events");
 
         const result = await collection.aggregate([
-            { $match: {year: Number(year) } }
+            { $match: { year: Number(year) } }
         ]).toArray();
 
         const placements = result[0].events.map(event => ({
@@ -117,8 +149,8 @@ app.get('/api/events/year/:year', async (req, res) => {
 
         }));
 
-        return res.json({ 
-            year: year, 
+        return res.json({
+            year: year,
             events: placements
         });
 
@@ -140,15 +172,15 @@ app.get('/api/events/range/:startYear/:endYear', async (req, res) => {
         ]).toArray();
 
         // Flatten all events into a single array and add placement
-        const allEvents = result.flatMap(yearDoc => 
+        const allEvents = result.flatMap(yearDoc =>
             yearDoc.events.map(event => ({
                 ...event,
                 year: yearDoc.year, // Include year for reference
                 placement: ((parseInt(event.date.split("-")[1] - 1) * 30 + parseInt(event.date.split("-")[2])) / 361).toFixed(3)
             })
-        ));
+            ));
 
-        return res.json({ 
+        return res.json({
             range: `${startYear}-${endYear}`,
             events: allEvents
         });
@@ -184,9 +216,9 @@ app.get('/api/gus/retirement/:id/year/:year', async (req, res) => {
         const yearData = values.find(item => item.year === year);
 
         return res.json({
-                id: id,
-                year: year,
-                value: yearData.val
+            id: id,
+            year: year,
+            value: yearData.val
         });
     } catch (error) {
         console.error('Error fetching data from BDL:', error);
@@ -224,7 +256,7 @@ app.get('/api/gus/retirement/:id/range/:startYear/:endYear', async (req, res) =>
 
 app.get('/', (req, res) => {
     res.send('Stats API is running');
-  });
+});
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

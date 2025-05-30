@@ -24,8 +24,7 @@ const DataRangeDropdown = () => {
 
   const formats = [
     { value: 'json', label: 'Wyświetl jako JSON' },
-    { value: 'yaml', label: 'Wyświetl jako YAML' },
-    { value: 'xml', label: 'Wyświetl jako XML' }
+    { value: 'yaml', label: 'Wyświetl jako YAML' }
   ];
 
   const fetchData = async (option) => {
@@ -95,6 +94,7 @@ const DataRangeDropdown = () => {
         }
       }
     };
+
     convert(obj);
     xml += `</${root}>`;
     return xml;
@@ -110,28 +110,14 @@ const DataRangeDropdown = () => {
     URL.revokeObjectURL(url);
   };
 
-  const handleDownload = (format) => {
-    return () => {
-      if (!jsonData) {
-        alert('Brak danych do pobrania');
-        return;
-      }
-      let content;
-      let filename = `data.${format}`;
-      let type = 'application/json';
-      if (format === 'json') {
-        content = JSON.stringify(jsonData, null, 2);
-      } else if (format === 'yaml') {
-        content = yaml.dump(jsonData);
-        filename = `data.yaml`;
-        type = 'application/x-yaml';
-      } else if (format === 'xml') {
-        content = jsonToXml(jsonData, 'data');
-        filename = `data.xml`;
-        type = 'application/xml';
-      }
-      downloadFile(content, filename, type);
-    };
+  const handleDownloadJson = () => {
+    const jsonStr = JSON.stringify(jsonData, null, 2);
+    downloadFile(jsonStr, 'dane.json', 'application/json');
+  };
+
+  const handleDownloadXml = () => {
+    const xmlStr = jsonToXml(jsonData);
+    downloadFile(xmlStr, 'dane.xml', 'application/xml');
   };
 
   const { data: session, status } = useSession();
@@ -196,26 +182,21 @@ const DataRangeDropdown = () => {
             <pre className="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm text-black whitespace-pre-wrap h-[500px]">
               {displayFormat === 'json'
                 ? JSON.stringify(jsonData, null, 2)
-                : displayFormat === 'yaml'
-                ? yaml.dump(jsonData)
-                : displayFormat === 'xml'
-                ? jsonToXml(jsonData, 'data')
-                : ''}
+                : yaml.dump(jsonData)}
             </pre>
 
             <div className="mt-4 flex gap-4">
               <button
-                onClick={handleDownload(displayFormat)}
+                onClick={handleDownloadJson}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow"
               >
-                Pobierz plik w formacie{' '}
-                {displayFormat === 'json'
-                  ? 'JSON'
-                  : displayFormat === 'yaml'
-                  ? 'YAML'
-                  : displayFormat === 'xml'
-                  ? 'XML'
-                  : ''}
+                Pobierz JSON
+              </button>
+              <button
+                onClick={handleDownloadXml}
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow"
+              >
+                Pobierz XML
               </button>
             </div>
           </div>

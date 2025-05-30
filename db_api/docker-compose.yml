@@ -61,19 +61,76 @@
         timeout: 5s
         retries: 5
 
-    frontend:
-      build:
-        context: ./stats_front
-        dockerfile: Dockerfile
+    # frontend:
+    #   build:
+    #     context: ./stats_front
+    #     dockerfile: Dockerfile
       
-      container_name: stats_frontend
-      ports:
-        - "3000:3000"
-      depends_on:
-        api:
-          condition: service_healthy
-        userdb:
-          condition: service_healthy
+    #   container_name: stats_frontend
+    #   ports:
+    #     - "3000:3000"
+    #   depends_on:
+    #     api:
+    #       condition: service_healthy
+    #     userdb:
+    #       condition: service_healthy
+
+
+    # prometheus:
+    #   image: prom/prometheus
+    #   container_name: prometheus
+    #   ports:
+    #     - "9090:9090"
+    #   volumes:
+    #     - prometheus_data:/prometheus
+    #     - prometheus_config:/etc/prometheus
+    #   command:
+    #     - '--config.file=/etc/prometheus/prometheus.yml'
+    #   depends_on:
+    #     - api
+    #     - mongodb-exporter
+    #     - userdb-exporter
+    #   restart: unless-stopped
+
+    # grafana:
+    #   image: grafana/grafana
+    #   container_name: grafana
+    #   ports:
+    #     - "3001:3000"
+    #   volumes:
+    #     - grafana_data:/var/lib/grafana
+    #   depends_on:
+    #     - prometheus
+    #   restart: unless-stopped
+
+    # mongodb-exporter:
+    #   image: bitnami/mongodb-exporter
+    #   environment:
+    #     - MONGODB_URI=mongodb://admin:secret@mongodb:27017
+    #   ports:
+    #     - "9216:9216"
+    #   depends_on:
+    #     - mongodb
+    #   restart: unless-stopped
+
+    # userdb-exporter:
+    #   image: prometheuscommunity/postgres-exporter
+    #   environment:
+    #     - DATA_SOURCE_NAME=postgresql://postgres:secret@userdb:5432/postgres?sslmode=disable
+    #   ports:
+    #     - "9187:9187"
+    #   depends_on:
+    #     - userdb
+    #   restart: unless-stopped
 
   volumes:
     userdb_data:
+    # prometheus_data:
+    # grafana_data:
+    # prometheus_config:
+    #   driver: local
+    #   driver_opts:
+    #     type: none
+    #     device: ./prometheus
+    #     o: bind
+    

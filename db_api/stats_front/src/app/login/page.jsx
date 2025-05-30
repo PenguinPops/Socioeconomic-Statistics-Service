@@ -4,12 +4,13 @@
 import LoginForm from './LoginForm';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
+import { LoadingSpinner } from '@/app/components/LoadingSpinner/page';
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (session) {

@@ -44,7 +44,7 @@ const Menu = () => {
             {/* Menu główne */}
             <nav className="flex-1">
                 <ul className="space-y-2">
-                    <MenuItem icon={<MdBarChart size={20} />} text="Analiza" href="/home" isActive={pathname === "/home"} />
+                    <MenuItem icon={<MdBarChart size={20} />} text="Analiza" href="/home" isActive={pathname === "/home" || pathname === "/"} />
                     <MenuItem icon={<MdDisplaySettings size={20} />} text="Panel administratora" href="/admin" isActive={pathname === "/admin"} />
                     <MenuItem icon={<MdFolder size={20} />} text="Surowe Dane" href="/surowedane" isActive={pathname === "/surowedane"} />
                     <MenuItem icon={<MdCode size={20} />} text="API" href="/apibuilder" isActive={pathname === "/apibuilder"} />
